@@ -3,7 +3,7 @@
 # Description: update the uniref90 database for PSIBLAST
 # Author: Nanjiang Shu (nanjiang.shu@scilifelab.se)
 
-dbname=${dbname}
+dbname=uniref90.fasta
 progname=`basename $0`
 size_progname=${#progname}
 wspace=`printf "%*s" $size_progname ""` 
