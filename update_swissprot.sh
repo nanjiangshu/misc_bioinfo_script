@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# Filename: update_swissprot.sh
 # Description: update the swissprot database for PSIBLAST
 # Author: Nanjiang Shu (nanjiang.shu@scilifelab.se)
 
+dbname=swissprot
 progname=`basename $0`
 size_progname=${#progname}
 wspace=`printf "%*s" $size_progname ""` 
@@ -13,7 +13,7 @@ Usage:  $progname OUTPATH
 Created 2016-04-28, updated 2016-04-28, Nanjiang Shu
 
 Examples:
-# update the swissprot blastdb at path /data/blastdb
+# update the $dbname blastdb at path /data/blastdb
 # the old database will be overwritten if exists
     $progname /data/blastdb
 "
@@ -46,6 +46,7 @@ IsProgExist wget
 IsProgExist formatdb
 IsProgExist gzip
 IsProgExist readlink
+IsProgExist curl
 
 isQuiet=0
 outpath=$1
@@ -57,10 +58,28 @@ fi
 
 outpath=`readlink -f $outpath`
 
-url=ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/swissprot.gz
-filename=swissprot.gz
+url=ftp://ftp.ncbi.nlm.nih.gov/blast/db/FASTA/${dbname}.gz
+filename=${dbname}.gz
 
-tmpdir=$(mktemp -d $outpath/tmpdir.update_swissprot.XXXXXXXXX) || { echo "Failed to create temp dir" >&2; exit 1; }
+# check whether the database is up-to-date
+IS_UP_TO_DATE=false
+
+if [ -f "$outpath/$dbname" ];then
+    date_local_db=$(stat -c  "%y" $outpath/$dbname | awk '{print $1}')
+    date_remote_db=$(curl -I $url 2>/dev/null | grep Last-Mo | awk -F: '{print $2}')
+    date_remote_db=$(/bin/date -d"$date_remote_db" +%Y-%m-%d)
+
+    if [ "$date_remote_db" == "$date_local_db" -a "$date_remote_db" != "" ];then
+        IS_UP_TO_DATE=true
+    fi
+fi
+
+if [ "$IS_UP_TO_DATE" == "true" ];then
+    echo "$dbname is already up to date to $date_remote_db"
+    exit 0
+fi
+
+tmpdir=$(mktemp -d $outpath/tmpdir.update_${dbname}.XXXXXXXXX) || { echo "Failed to create temp dir" >&2; exit 1; }
 trap 'rm -rf "$tmpdir"' INT TERM EXIT
 
 
@@ -68,19 +87,19 @@ cd $tmpdir
 
 exec_cmd "wget $url -O $filename"
 exec_cmd "gzip -dN $filename"
-exec_cmd "formatdb -i swissprot -p T -o T"
+exec_cmd "formatdb -i $dbname -p T -o T"
 
 SUCCESS=0
-if [ -s swissprot.phr -o -s swissprot.00.phr ] ;then
+if [ -s ${dbname}.phr -o -s ${dbname}.00.phr ] ;then
     SUCCESS=1
 fi
 
 if [ $SUCCESS -eq 1 ];then
     cd $outpath
 
-    rm -f swissprot swissprot.*
+    rm -f $dbname ${dbname}.*
 
-    mv -f $tmpdir/swissprot* $outpath/
+    mv -f $tmpdir/${dbname}* $outpath/
 fi
 
 rm -rf $tmpdir
