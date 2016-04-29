@@ -42,10 +42,17 @@ if [ $# -ne 1 ]; then
     exit
 fi
 
+pfilt=$PSIPREDBIN/pfilt
 IsProgExist wget
 IsProgExist formatdb
 IsProgExist gzip
 IsProgExist readlink
+
+if [ "$PSIPREDBIN" == "" ];then
+    echo "env PSIPREDBIN is not set. Please set it as the path to the PSIPRED bin, where the program 'pfilt' is located" >&2
+    exit 1
+fi
+IsProgExist $pfilt
 
 isQuiet=0
 outpath=$1
@@ -69,6 +76,8 @@ cd $tmpdir
 exec_cmd "wget $url -O $filename"
 exec_cmd "gzip -dN $filename"
 exec_cmd "formatdb -i uniref90.fasta -p T -o T"
+exec_cmd "$pfilt uniref90.fasta > uniref90filt"
+exec_cmd "formatdb -i uniref90filt -p T -o T"
 
 SUCCESS=0
 if [ -s uniref90.fasta.00.phr ] ;then
@@ -78,9 +87,10 @@ fi
 if [ $SUCCESS -eq 1 ];then
     cd $outpath
 
-    rm -f uniref90.fasta uniref90.fasta*
+    rm -f uniref90filt* uniref90.fasta uniref90.fasta*
 
     mv -f $tmpdir/uniref90.fasta* $outpath/
+    mv -f $tmpdir/uniref90filt* $outpath/
 fi
 
 rm -rf $tmpdir
