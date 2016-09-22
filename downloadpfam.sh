@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ftpsite=ftp://ftp.sanger.ac.uk/pub/databases/Pfam/current_release
+ftpsite=ftp://ftp.ebi.ac.uk/pub/databases/Pfam/current_release/
 
 usage="
 Usage: $0 OUTDIR
