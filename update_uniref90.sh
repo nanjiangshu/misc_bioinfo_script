@@ -49,10 +49,10 @@ IsProgExist gzip
 IsProgExist readlink
 
 if [ "$PSIPREDBIN" == "" ];then
-    echo "env PSIPREDBIN is not set. Please set it as the path to the PSIPRED bin, where the program 'pfilt' is located" >&2
-    exit 1
+    echo "Warning, env PSIPREDBIN is not set. Please set it as the path to the PSIPRED bin, where the program 'pfilt' is located" >&2
+    #exit 1
 fi
-IsProgExist $pfilt
+#IsProgExist $pfilt
 
 isQuiet=0
 outpath=$1
@@ -95,7 +95,9 @@ cd $tmpdir
 exec_cmd "wget $url -O $filename"
 exec_cmd "gzip -dN $filename"
 exec_cmd "formatdb -i ${dbname} -p T -o T"
-exec_cmd "$pfilt ${dbname} > uniref90filt"
+if [ "$PSIPREDBIN" != "" ];then
+    exec_cmd "$pfilt ${dbname} > uniref90filt"
+fi
 exec_cmd "formatdb -i uniref90filt -p T -o T"
 
 SUCCESS=0
