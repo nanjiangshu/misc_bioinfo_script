@@ -87,7 +87,7 @@ cd $tmpdir
 
 exec_cmd "wget $url -O $filename"
 exec_cmd "gzip -dN $filename"
-exec_cmd "formatdb -i $dbname -p T -o T"
+exec_cmd "formatdb -i $dbname -p T"
 
 SUCCESS=0
 if [ -s ${dbname}.phr -o -s ${dbname}.00.phr ] ;then

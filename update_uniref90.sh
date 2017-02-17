@@ -94,11 +94,11 @@ cd $tmpdir
 
 exec_cmd "wget $url -O $filename"
 exec_cmd "gzip -dN $filename"
-exec_cmd "formatdb -i ${dbname} -p T -o T"
+exec_cmd "formatdb -i ${dbname} -p T"
 if [ "$PSIPREDBIN" != "" ];then
     exec_cmd "$pfilt ${dbname} > uniref90filt"
 fi
-exec_cmd "formatdb -i uniref90filt -p T -o T"
+exec_cmd "formatdb -i uniref90filt -p T"
 
 SUCCESS=0
 if [ -s ${dbname}.00.phr ] ;then
