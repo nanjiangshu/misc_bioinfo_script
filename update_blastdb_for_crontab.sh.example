@@ -1,0 +1,23 @@
+#!/bin/bash
+
+lockfile=/tmp/.update_blastdb_for_crontab.sh.lock
+
+if [ -f $lockfile ]; then
+    echo "lockfile $lockfile exist, exit"
+    exit 1
+fi
+
+date > $lockfile
+
+trap 'rm -f "$lockfile"' INT TERM EXIT
+#==========================================================================
+export PSIPREDBIN=/server/var/www/pcons/bin/psipred/bin
+
+/data3/program/misc_bioinfo_script/update_swissprot.sh   /data/blastdb
+/data3/program/misc_bioinfo_script/update_nr.sh          /data/blastdb
+/data3/program/misc_bioinfo_script/update_uniref90.sh    /data/blastdb
+
+#==========================================================================
+
+
+rm -f $lockfile
