@@ -92,7 +92,7 @@ trap 'rm -rf "$tmpdir"' INT TERM EXIT
 
 cd $tmpdir
 
-exec_cmd "wget $url -O $filename"
+exec_cmd "wget -q $url -O $filename"
 exec_cmd "gzip -dN $filename"
 exec_cmd "formatdb -i ${dbname} -p T"
 if [ "$PSIPREDBIN" != "" ];then

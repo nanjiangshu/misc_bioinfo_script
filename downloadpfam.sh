@@ -30,7 +30,7 @@ active_site.dat.gz
 
 cd $outdir
 for file in $filelist; do
-    wget $ftpsite/$file -O $file
+    wget -q $ftpsite/$file -O $file
 done
 
 gzip -dN *.gz
