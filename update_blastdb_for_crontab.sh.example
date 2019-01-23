@@ -16,6 +16,8 @@ date > $lockfile
 trap 'rm -f "$lockfile"' INT TERM EXIT
 #==========================================================================
 export PSIPREDBIN=/server/var/www/pcons/bin/psipred/bin
+export BLASTPLUSBIN=/data3/usr/share/blast/ncbi-blast-2.6.0+/bin
+export PATH=$PATH:$BLASTPLUSBIN
 
 cd $rundir
 
