@@ -16,16 +16,16 @@ Email: nanjiang.shu@scilifelab.se
 
 create the blastdb for swissprot
 
-    update_swissprot.sh <PATH-OF-BLASTDB>
+    bash update_blastdb.sh swissprot  <PATH-OF-BLASTDB>
 
 
 create the blastdb for NCBI nr database
 
-    update_nr.sh <PATH-OF-BLASTDB>
+    bash update_blastdb.sh nr <PATH-OF-BLASTDB>
 
 create the blastdb for the UniProt uniref90 database
 
-    update_uniref90.sh <PATH-OF-BLASTDB>
+    bash update_blastdb.sh uniref90 <PATH-OF-BLASTDB>
 
 
 
